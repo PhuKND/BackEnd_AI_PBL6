@@ -1,0 +1,15 @@
+app:
+    api:
+        prefix: /api/v1
+    security:
+      expiresIn: 6000 # 300 second = 5 minutes
+      expiresRefresh: 30000 # 3000 second = 50p
+      secret: fEJ6qu3MQ1pwdpRYxhiXNpor7jNV6tCdhw73m9rR5TfH5rS6Zq1tVDsUooXljGi3
+    clodinary:
+      url: cloudinary://673758235311112:lQ-W_bCswUJHcqmGXVenasImLnY@dqtj816ds
+
+spring:
+    application:
+        name: medical_store
+    profiles:
+        active: dev
