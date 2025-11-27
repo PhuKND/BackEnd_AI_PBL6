@@ -1,0 +1,7 @@
+{
+  "source_checkpoint_basename": "checkpoint-2535",
+  "source_checkpoint_path": "/content/phobert_intent_vi/checkpoint-2535",
+  "export_path": "/content/drive/MyDrive/PBL6_DataSet/PBL6_Dataset",
+  "checkpoint_finished_time_utc": "2025-09-26T13:32:29.291758+00:00",
+  "checkpoint_finished_time_vietnam": "2025-09-26T20:32:29.291758+07:00"
+}

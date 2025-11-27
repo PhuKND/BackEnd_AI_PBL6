@@ -13,4 +13,5 @@ import lombok.experimental.FieldDefaults;
 public class CreateUserRequest {
     String username;
     String password;
+    String repeat;
 }

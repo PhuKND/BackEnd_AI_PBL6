@@ -26,7 +26,8 @@ public class DetailProduct {
     String manufactureId;
     Boolean precription;
     Double originPrice;
-//    Double discount;
+    Double discountPrice;
+    Double discountPercen;
     Double ratingAvg;
     @JsonFormat( pattern = "dd/MM/yyyy")
     Date productDate;

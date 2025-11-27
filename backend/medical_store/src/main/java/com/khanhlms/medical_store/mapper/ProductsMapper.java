@@ -34,11 +34,24 @@ public abstract class ProductsMapper {
 
     @Mapping(source = "images", target = "imageUrl", qualifiedByName = "mapImageUrlPrimary")
     @Mapping(source = "id", target = "id")
+    @Mapping(source = "entity.discount", target = "discountPercent", qualifiedByName = "mapDiscountPercent")
+    @Mapping(source = "entity", target = "discountPrice", qualifiedByName = "mapDiscountPrice")
     public abstract ProductResponse toProductResponse(ProductsEntity entity);
     @Named("mapImageUrlPrimary")
     protected String mapImageUrlPrimary(List<ImagesEntity> imagesEntities) {
         if (imagesEntities == null || imagesEntities.isEmpty()) {return null;}
         return imagesEntities.get(0).getImageUrl();
+    }
+    @Named("mapDiscountPrice")
+    protected Double mapDiscountPrice(ProductsEntity productsEntities) {
+        if (productsEntities.getDiscount() == null || productsEntities.getDiscount() .getPercent() == null) {return null;}
+        double discountPercent = productsEntities.getDiscount().getPercent();
+        return productsEntities.getOriginPrice() * (100 - discountPercent) / 100;
+    }
+    @Named("mapDiscountPercent")
+    protected Double mapDiscountPercent(DiscountEntity discountEntities) {
+        if (discountEntities == null || discountEntities.getPercent() == null) {return null;}
+        return discountEntities.getPercent();
     }
 ///////////////////////////////
     @Mappings({

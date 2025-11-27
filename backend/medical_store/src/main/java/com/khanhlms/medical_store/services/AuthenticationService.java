@@ -1,5 +1,6 @@
 package com.khanhlms.medical_store.services;
 
+import com.khanhlms.medical_store.dtos.Auth.requests.ChangePasswordRequest;
 import com.khanhlms.medical_store.dtos.requests.auth.LoginRequest;
 import com.khanhlms.medical_store.dtos.requests.auth.LogoutRequest;
 import com.khanhlms.medical_store.dtos.response.auth.LoginResponse;
@@ -10,6 +11,7 @@ import com.khanhlms.medical_store.exceptions.AppException;
 import com.khanhlms.medical_store.exceptions.ErrorCode;
 import com.khanhlms.medical_store.repositories.UserRepository;
 import com.khanhlms.medical_store.utills.BaseRedisUtils;
+import com.khanhlms.medical_store.utills.StringUtils;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -21,6 +23,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -34,7 +37,7 @@ public class AuthenticationService {
     final AuthenticationManager authenticationManager;
     final UserRepository userRepository;
     final BaseRedisUtils baseRedisUtils;
-
+    final PasswordEncoder passwordEncoder;
     private static final String TOKEN_PREFIX = "BLACKLIST:TOKEN:";
 
     @Value("${app.security.expiresIn}")
@@ -48,6 +51,10 @@ public class AuthenticationService {
     public LoginResponse hanlelogin(LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
         authenticationManager.authenticate(token);
+        var user = userRepository.findByUsername(loginRequest.getUsername()).get();
+        if (!user.getIsActive()){
+            throw  new AppException(ErrorCode.USER_IS_LOOKED);
+        }
         return LoginResponse.builder()
                 .tokenType("Bearer")
                 .accessToken(generateToken(loginRequest.getUsername(), true))
@@ -140,6 +147,9 @@ public class AuthenticationService {
                 .success(true)
                 .build();
     }
+    public void addBlacklist(String token) {
+        this.baseRedisUtils.set(this.TOKEN_PREFIX + this.jwtID(token),true, this.timeToLongToken(token), TimeUnit.SECONDS);
+    }
     private long timeToLongToken(String token) {
         SignedJWT signedJWT = null;
         try {
@@ -167,5 +177,43 @@ public class AuthenticationService {
         Object result = this.baseRedisUtils.getForString(this.TOKEN_PREFIX+jwtID);
         return  Boolean.TRUE.equals(result);
     }
+
+    public void handChangePass(String username, ChangePasswordRequest req) {
+
+        // Validate input (chống null + rỗng)
+        if (StringUtils.isBlank(req.getOldPassword()) ||
+                StringUtils.isBlank(req.getNewPassword()) ||
+                StringUtils.isBlank(req.getConfirmNewPassword())) {
+            throw new AppException(ErrorCode.INVALID_REQUEST);
+        }
+
+        String oldPassword = req.getOldPassword();
+        String newPassword = req.getNewPassword();
+        String confirmNewPassword = req.getConfirmNewPassword();
+
+        // Mật khẩu mới phải trùng confirm
+        if (!newPassword.equals(confirmNewPassword)) {
+            throw new AppException(ErrorCode.PASSWORD_MISMATCH);
+        }
+
+        // Mật khẩu mới độ dài tối thiểu
+        if (newPassword.length() < 8) {
+            throw new AppException(ErrorCode.PASSWORD_TOO_SHORT);
+        }
+
+        UserEntity userEntity = userRepository.findByUsername(username).get();
+
+        if (!passwordEncoder.matches(oldPassword, userEntity.getPassword())) {
+            throw new AppException(ErrorCode.AUTHENTICATION_EXCEPTION);
+        }
+
+        if (passwordEncoder.matches(newPassword, userEntity.getPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_SAME_AS_OLD);
+        }
+
+        userEntity.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(userEntity);
+    }
+
 }
 

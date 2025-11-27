@@ -1,0 +1,51 @@
+{
+  "architectures": [
+    "RobertaForSequenceClassification"
+  ],
+  "attention_probs_dropout_prob": 0.1,
+  "bos_token_id": 0,
+  "classifier_dropout": null,
+  "dtype": "float32",
+  "eos_token_id": 2,
+  "gradient_checkpointing": false,
+  "hidden_act": "gelu",
+  "hidden_dropout_prob": 0.1,
+  "hidden_size": 768,
+  "id2label": {
+    "0": "C\u1ea3m c\u00fam ho\u1eb7c c\u1ea3m l\u1ea1nh",
+    "1": "Suy th\u1eadn",
+    "2": "S\u1ecfi th\u1eadn",
+    "3": "Tim m\u1ea1ch",
+    "4": "Ti\u1ec3u \u0111\u01b0\u1eddng",
+    "5": "Tr\u0129",
+    "6": "Vi\u00eam da ti\u1ebfp x\u00fac",
+    "7": "X\u01a1 gan ho\u1eb7c gan c\u00f3 v\u1ea5n \u0111\u1ec1",
+    "8": "\u0110au l\u01b0ng v\u00e0 vi\u00eam kh\u1edbp"
+  },
+  "initializer_range": 0.02,
+  "intermediate_size": 3072,
+  "label2id": {
+    "C\u1ea3m c\u00fam ho\u1eb7c c\u1ea3m l\u1ea1nh": 0,
+    "Suy th\u1eadn": 1,
+    "S\u1ecfi th\u1eadn": 2,
+    "Tim m\u1ea1ch": 3,
+    "Ti\u1ec3u \u0111\u01b0\u1eddng": 4,
+    "Tr\u0129": 5,
+    "Vi\u00eam da ti\u1ebfp x\u00fac": 6,
+    "X\u01a1 gan ho\u1eb7c gan c\u00f3 v\u1ea5n \u0111\u1ec1": 7,
+    "\u0110au l\u01b0ng v\u00e0 vi\u00eam kh\u1edbp": 8
+  },
+  "layer_norm_eps": 1e-05,
+  "max_position_embeddings": 258,
+  "model_type": "roberta",
+  "num_attention_heads": 12,
+  "num_hidden_layers": 12,
+  "pad_token_id": 1,
+  "position_embedding_type": "absolute",
+  "problem_type": "single_label_classification",
+  "tokenizer_class": "PhobertTokenizer",
+  "transformers_version": "4.56.2",
+  "type_vocab_size": 1,
+  "use_cache": true,
+  "vocab_size": 64001
+}

@@ -1,5 +1,6 @@
 package com.khanhlms.medical_store.controllers;
 
+import com.khanhlms.medical_store.dtos.Auth.requests.ChangePasswordRequest;
 import com.khanhlms.medical_store.dtos.requests.auth.IntrospectRequest;
 import com.khanhlms.medical_store.dtos.requests.auth.LoginRequest;
 import com.khanhlms.medical_store.dtos.requests.auth.LogoutRequest;
@@ -7,21 +8,19 @@ import com.khanhlms.medical_store.dtos.response.ApiResponse;
 import com.khanhlms.medical_store.dtos.response.auth.LoginResponse;
 import com.khanhlms.medical_store.dtos.response.auth.LogoutResponse;
 import com.khanhlms.medical_store.services.AuthenticationService;
+import com.khanhlms.medical_store.utills.AuthenticationUtills;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("${app.api.prefix}/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationController {
-
-    private final AuthenticationService authenticationService;
+    AuthenticationUtills authenticationUtills;
+    AuthenticationService authenticationService;
 
     @PostMapping("/login")
     public ApiResponse<LoginResponse> login(@RequestBody  LoginRequest loginRequest) {
@@ -44,6 +43,16 @@ public class AuthenticationController {
         return ApiResponse.<LogoutResponse>builder()
                 .message("Logout Successful")
                 .data(this.authenticationService.handLogout(logoutRequest))
+                .build();
+    }
+    @PatchMapping( value = "/password")
+    public ApiResponse<Void> changePass(@RequestBody ChangePasswordRequest changePassword){
+        String username = this.authenticationUtills.getUserName();
+
+        this.authenticationService.handChangePass(username ,changePassword);
+        return ApiResponse.<Void>builder()
+                .code(204)
+                .message("Change Password Successful")
                 .build();
     }
 

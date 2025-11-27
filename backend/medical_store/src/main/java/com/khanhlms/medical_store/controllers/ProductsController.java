@@ -33,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("${app.api.prefix}")
@@ -162,4 +163,15 @@ public class ProductsController {
                 .data(this.productsSercvice.getByKeyword(keyword, PageRequest.of(page, size)))
                 .build();
     }
+    @GetMapping("/products/filter")
+    public ApiResponse<List<ProductResponse>> filter(@RequestParam Map<String, String> filters,
+                                                     @RequestParam(defaultValue = "0") Integer page,
+                                                     @RequestParam(defaultValue = "50") Integer size){
+        return ApiResponse.<List<ProductResponse>>builder()
+                .code(200)
+                .message("filter product by filters successfully")
+                .data(this.productsSercvice.handleFilter(filters, page, size))
+                .build();
+    }
+
 }

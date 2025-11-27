@@ -38,7 +38,7 @@ public class ProductsEntity extends BaseEntity {
     Integer position;
     String sideEffect; // tác dụng phụ
     String note;
-    String preserve;
+    String preserve; // cach bao quan
     @Column(name = "product_usage")
     String usage; // cách sử dụng
     String benefit; // lợi ích

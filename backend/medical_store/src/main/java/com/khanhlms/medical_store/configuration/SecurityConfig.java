@@ -47,7 +47,8 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_END_POINT_TEST = { "/api/v1/users"};
     private final String[] PUBLIC_END_POINT_GET = {"/categories",
-        "/products", "/products/detail/{id}", "/products/search", "/products/filter"
+        "/products", "/products/detail/{id}", "/products/search", "/products/filter",
+            "/payment/vnpay/return"
     };
 
     private String[] buildWithPrefix(String[] data, String prefix) {
@@ -63,6 +64,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers(PREFIX_API+"/ai/**").permitAll()
                         .requestMatchers(HttpMethod.GET,buildWithPrefix(PUBLIC_END_POINT_GET, PREFIX_API)).permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_END_POINT_TEST).permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()

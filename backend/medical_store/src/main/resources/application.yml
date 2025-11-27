@@ -1,13 +1,23 @@
+server:
+  port: 8080
+
 app:
     api:
         prefix: /api/v1
+        prefixAI: http://127.0.0.1:8000
     security:
       expiresIn: 6000 # 300 second = 5 minutes
       expiresRefresh: 30000 # 3000 second = 50p
       secret: fEJ6qu3MQ1pwdpRYxhiXNpor7jNV6tCdhw73m9rR5TfH5rS6Zq1tVDsUooXljGi3
     clodinary:
       url: cloudinary://673758235311112:lQ-W_bCswUJHcqmGXVenasImLnY@dqtj816ds
-
+    file:
+      prefix: /uploads
+vnpay:
+  tmnCode: RMEWAEMU
+  hashSecret: GSNJ39IBETFV4UBG50R9QZP9GQEDSYMQ
+  payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  returnUrl: https://treponemal-kiara-unpurely.ngrok-free.dev/api/v1/payment/vnpay/return
 spring:
     application:
         name: medical_store

@@ -20,10 +20,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -102,11 +99,23 @@ public class ProductsSercvice {
     public DetailProduct handGetDetailProduct(String productId) {
         ProductsEntity product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        return productsMapper.toDetailProduct(product);
+        var result = productsMapper.toDetailProduct(product);
+        double percentage = 0;
+        if (product.getDiscount() != null) {
+            percentage = product.getDiscount().getPercent();
+        }
+        result.setDiscountPercen(percentage);
+        result.setDiscountPrice(result.getOriginPrice() * (100 - percentage ) / 100);
+        return result;
     }
     public List<ProductResponse> getByKeyword(String keyword, Pageable pageable) {
         if (keyword.equals("")) return Collections.emptyList();
         return this.productRepository.getProductsByKeyword(keyword).stream()
+                .map(product -> this.productsMapper.toProductResponse(product))
+                .toList();
+    }
+    public List<ProductResponse> handleFilter(Map<String, String> filters, Integer page, Integer size) {
+        return this.productRepository.filterProducts(filters, page, size).stream()
                 .map(product -> this.productsMapper.toProductResponse(product))
                 .toList();
     }

@@ -3,6 +3,8 @@ package com.khanhlms.medical_store.services;
 import com.khanhlms.medical_store.dtos.requests.categories.CreateCategoryRequest;
 import com.khanhlms.medical_store.dtos.response.categories.CategoryResponse;
 import com.khanhlms.medical_store.entities.CategoryEntity;
+import com.khanhlms.medical_store.exceptions.AppException;
+import com.khanhlms.medical_store.exceptions.ErrorCode;
 import com.khanhlms.medical_store.mapper.CategoriesMapper;
 import com.khanhlms.medical_store.repositories.CategoriesRepository;
 import lombok.AccessLevel;
@@ -20,6 +22,12 @@ public class CategoriesService {
     CategoriesRepository categoriesRepository;
     CategoriesMapper categoriesMapper;
     public CategoryResponse handCreteCategory(CreateCategoryRequest createCategoryRequest) {
+        if (createCategoryRequest.getName() == null || createCategoryRequest.getName().isEmpty()) {
+            throw  new AppException(ErrorCode.INVALID_REQUEST);
+        }
+        if (categoriesRepository.findByName(createCategoryRequest.getName()).isPresent()) {
+            throw new AppException(ErrorCode.CATEGORY_EXITSTED);
+        }
         CategoryEntity categoryEntity = categoriesMapper.toEntity(createCategoryRequest);
         categoryEntity.setPosition((int)this.categoriesRepository.count());
         categoryEntity.setActive(true);
